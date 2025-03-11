@@ -18,7 +18,7 @@ venv/
 data/raw/
 data/processed/
 .cache/
-kaggle.json  # API key for Kaggle, should not be shared
+*.env
 
 # Ignore model checkpoints
 models/checkpoints/
