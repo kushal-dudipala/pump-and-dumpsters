@@ -1,0 +1,2 @@
+Cryptocurrency Historical Prices: https://www.kaggle.com/datasets/sudalairajkumar/cryptocurrencypricehistory
+Huge Stock Market Dataset: https://www.kaggle.com/datasets/borismarjanovic/price-volume-data-for-all-us-stocks-etfs
