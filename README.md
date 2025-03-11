@@ -4,5 +4,5 @@
 Pump and Dumpsters 
 
 ## Authors
-Ronak Argawal, Kushal Dudipala, Rashmith Repalla
+Ronak Argawal, Kushal Dudipala, Rashmith Repala
 
