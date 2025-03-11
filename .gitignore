@@ -1,3 +1,45 @@
+# Ignore system files
 .DS_Store
-.vscode/*
-.data/*
+
+# Ignore IDE/editor files
+.vscode/
+
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+.env
+
+# Ignore data files
+data/raw/
+data/processed/
+.cache/
+kaggle.json  # API key for Kaggle, should not be shared
+
+# Ignore model checkpoints
+models/checkpoints/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore Jupyter Notebook checkpoints
+notebooks/.ipynb_checkpoints/
+
+# Ignore output files and artifacts
+*.h5
+*.pth
+*.ckpt
+*.joblib
+*.pkl
+*.npy
+*.csv  # If raw/processed CSV files are temporary
+*.tsv
+
+# Ignore scripts-generated files
+scripts/__pycache__/
+scripts/*.log
