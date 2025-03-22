@@ -43,3 +43,6 @@ notebooks/.ipynb_checkpoints/
 # Ignore scripts-generated files
 scripts/__pycache__/
 scripts/*.log
+
+# Ignore pumpdumpsters module
+pumpdumpsters.egg-info/
