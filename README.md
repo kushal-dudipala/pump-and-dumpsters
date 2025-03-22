@@ -36,3 +36,12 @@ Ronak Argawal, Kushal Dudipala, Rashmith Repala
 - [x] **scripts/** – Write pace scrum script *(Kushal)*
 - [ ] **pumpdumpsters/** – Verify our evaluation scripts *Ronak*
 - [ ] **write checkin** – Write our checkin proposal *Together*
+
+
+## Notes 3/22
+* Pumpdumpsters is our evaluation python module. We need to go through and make each evaluation metric
+* Wrote a skeleton script for auto encoder, but we need to go make better (lots of hardcoding!)
+* Read over lstm model, may potentially need work
+* Need a dataset. Right now we are locally using a test.csv
+* Added pace support, but we may end up using elsewhere.
+* Added sandbox.py, but we want to eventually remove it once we have all the code working.
