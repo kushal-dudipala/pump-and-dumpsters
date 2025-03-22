@@ -6,11 +6,33 @@ Pump and Dumpsters
 ## Authors
 Ronak Argawal, Kushal Dudipala, Rashmith Repala
 
-TODO:
-- kaggle : dataset working (rashmih)
-- anomoloy_scan.py : find large jumps in data issue before we feed to models (kushal, rashmith)
-- data_cleaning.py : if neccessary (Ronak)
-- feature_learning.py : if necessary (Together)
-- models/ : write all model classes (Together)
-- scripts/ : write pace scrum script (Kushal)
-- pump-and-dumpsters/ : verify code (Ronak)
+## Instructions
+
+1) Open your terminal and navigate to the `pumpdumpsters` folder, then install the module in local editable mode (if editing files in `pumpdumpsters`, the module will reactievly update):
+
+   ```bash
+   cd pumpdumpsters
+   pip install -e .
+   ```
+
+   If you are not running in editable mode, use the following instead:
+
+   ```bash
+   cd pumpdumpsters
+   pip install .
+   ```
+
+
+## To-Do List
+
+- [ ] **Kaggle** – Work on dataset *(Rashmih)*
+- [ ] **anomoloy_scan.py** – Find large jumps in data before feeding to models *(Kushal, Rashmith)*
+- [ ] **data_cleaning.py** – Clean data if necessary *(Ronak)*
+- [ ] **feature_learning.py** – Implement feature learning if necessary *(Together)*
+- [ ] **models/** – Write all model classes 
+    - [x] `lstm_model.py` – Implement LSTM model *(Kushal)*
+    - [x] `auto_encoder.py` – Implement Auto Encoder model *(Kushal)* (NEEDS WORK!)
+    - [ ] `lstm_model.py` – Implement Hybrid CNN model *(Together)*
+- [x] **scripts/** – Write pace scrum script *(Kushal)*
+- [ ] **pumpdumpsters/** – Verify our evaluation scripts *Ronak*
+- [ ] **write checkin** – Write our checkin proposal *Together*
