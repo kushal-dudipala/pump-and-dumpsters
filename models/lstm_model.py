@@ -4,62 +4,61 @@ import tensorflow as tf
 from tensorflow.keras import Input
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
-from sklearn.model_selection import train_test_split
-from typing import Tuple
-
-"""
-Notes: May need to create optimizer and test_train_split ourselves
-"""
-
-
-
-import numpy as np
 from typing import Tuple, Union
+from muon import Muon
+from models.utils import convert_to_numpy_format, train_test_split, batching
 
-def create_sequences(
-    data:       Union[np.ndarray, list],
-    seq_len:    int = 30
+
+def create_sequences_multi(
+    data: np.ndarray,
+    seq_len: int = 30,
+    target_col: int = 3
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Converts a 1D array of numeric values into a 2D array of sequences (X) 
-    and their next-step targets (y).
+    Converts a 2D array of numeric values (multiple features) into:
+      1) a 3D array of input sequences (X)
+      2) a 1D array of corresponding next-step targets (y)
+    This function essentially transforms into subsequences for training the LSTM model.
 
     Parameters
     ----------
-    data            : A sequence of numeric values (closing prices).
+    data            : 2D array of shape (time_steps, num_features).
     seq_len         : The length of each subsequence used as input to the LSTM.
+    target_col      : Column index in `data` to use as the target. Default is 3,
 
     Returns
     -------
-    X               : 3D array of shape (num_samples, seq_len, 1).
-    y               : 1D array of corresponding next-step targets.
+    X               : 3D array of shape (num_samples, seq_len, num_features).
+    y               : 1D array of next-step targets from the specified feature column.
     """
-    # Convert data to np.float32 for consistency
-    data_array = np.array(data, dtype=np.float32)
+    data_array = convert_to_numpy_format(data)
+    assert data_array.ndim == 2, ("Input data must be a 2D array.")
+    assert seq_len > 0, ("Sequence length must be greater than 0.")
+    assert len(data_array) > seq_len, ("Data must have more rows than the sequence length.")
+    
 
-    X, y = [], []
+    X, Y = [], []
+
     for i in range(len(data_array) - seq_len):
-        seq = data_array[i : i + seq_len]
-        target = data_array[i + seq_len]
+        seq = data_array[i : i + seq_len, :]  # shape (seq_len, num_features)
+        target = data_array[i + seq_len, target_col]
         X.append(seq)
-        y.append(target)
+        Y.append(target)
 
-    # Convert lists to np.ndarray
-    X = np.array(X, dtype=np.float32)
-    y = np.array(y, dtype=np.float32)
+    X = convert_to_numpy_format(X)
+    Y = convert_to_numpy_format(Y)
 
-    # Reshape X to (num_samples, timesteps, features). Here features=1.
-    X = np.expand_dims(X, axis=-1)
-
-    return X, y
-
+    return X, Y
 
 def train_lstm_model(
-    df:         pd.DataFrame,
-    seq_len:    int = 30,
-    test_size:  float = 0.2,
-    epochs:     int = 10,
-    batch_size: int = 16
+    df: pd.DataFrame,
+    seq_len: int = 30,
+    test_size: float = 0.2,
+    epochs: int = 10,
+    batch_size: int = 16,
+    learning_rate: float = 1e-3,   
+    optimizer: str = 'adam',
+    dropout_rate: float = 0.2
 ) -> Tuple[tf.keras.Model, np.ndarray, np.ndarray]:
     """
     Trains a simple LSTM model 
@@ -71,43 +70,103 @@ def train_lstm_model(
     test_size       : Fraction of data used for testing.
     epochs          : Number of training epochs.
     batch_size      : Training batch size.
-
+    learning_rate   : Learning rate for the optimizer.
+    optimizer       : Defaults to 'adam'. If set to 'muon', uses the custom Muon optimizer.
+    dropout_rate    : Dropout rate for LSTM layers to prevent overfitting.
+    
     Returns:
     --------
-    model           :  trained LSTM model 
+    model           : trained LSTM model 
     X_test          : feature sequences 
     y_test          : test targets 
-    """
-    close_prices = df['close'].values
-    X, y = create_sequences(close_prices, seq_len=seq_len)
     
-    # Train/test split
+    Notes:
+    ------
+    - The model is built with two LSTM layers followed by a Dense layer for regression.
+    - The input shape is (seq_len, num_features) where num_features is the number of features in the data.
+    - The model utilizes a mean squared error loss function.
+    - The data is split into training and testing sets without shuffling to maintain time-series order.
+    - The function assumes the DataFrame has columns ['open', 'high', 'low', 'close', 'volume'].
+    - The function uses the 'close' column as the target for prediction.
+    """
+    required_columns = ['open', 'high', 'low', 'close', 'volume']
+    for col in required_columns:
+        assert col in df.columns, (f"DataFrame must contain '{col}' column.")
+    assert 0 < test_size < 1, ("test_size must be between 0 and 1.")
+    assert batch_size > 0, ("batch_size must be greater than 0.")
+    assert learning_rate > 0, ("learning_rate must be greater than 0.")
+    
+    data_features = df[['open', 'high', 'low', 'close', 'volume']].values
+    X, y = create_sequences_multi(data_features, seq_len=seq_len) 
+    
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=test_size, shuffle=False
     )
+    assert len(X_train) > 0 and len(X_test) > 0, ("Train and test splits must be non-empty.")
 
-    # Build LSTM model
+    num_features = X.shape[-1]
+    
+    # model architecture, subject to change
     model = Sequential([
-        Input(shape=(seq_len, 1)),
-        LSTM(64),
+        Input(shape=(seq_len, num_features)),
+        LSTM(64, return_sequences=True, dropout=dropout_rate, recurrent_dropout=dropout_rate),
+        LSTM(64, return_sequences=False, dropout=dropout_rate, recurrent_dropout=dropout_rate),
         Dense(1)
     ])
+   
+    if optimizer == 'muon':
+        # https://github.com/KellerJordan/Muon
+        opt = Muon(learning_rate=learning_rate)
+    else:
+        valid_optimizers = {
+            'adam': tf.keras.optimizers.Adam,
+            'sgd': tf.keras.optimizers.SGD,
+            # add after more testing!
+        }
+        assert optimizer in valid_optimizers, (
+            f"Unknown optimizer '{optimizer}'. Must be one of: {list(valid_optimizers.keys())}"
+        )
+        opt_class = valid_optimizers[optimizer]
+        opt = opt_class(learning_rate=learning_rate)
 
-    # Add optimizer (ADAM) and loss function (MSE)
-    model.compile(optimizer='adam', loss='mse')
+    opt_class = valid_optimizers[optimizer]
+    opt = opt_class(learning_rate=learning_rate)
+
+    loss_fn = tf.keras.losses.MeanSquaredError()
+
+    # Convert to tf.data.Dataset for easier batching
+    train_dataset = batching(X_train, y_train, batch_size)
+    test_dataset = batching(X_test, y_test, batch_size)
     
-    # Train the model
-    model.fit(
-        X_train, y_train,
-        validation_data=(X_test, y_test),
-        epochs=epochs,
-        batch_size=batch_size,
-        verbose=1
-    )
+    assert len(train_dataset) > 0, ("Training dataset batches are empty.")
+    assert len(test_dataset) > 0, ("Test dataset batches are empty.")
+
+    for epoch in range(epochs):
+        loss_per_epoch = 0.0
+        for x_batch, y_batch in train_dataset:
+            with tf.GradientTape() as tape:
+                preds = model(x_batch, training=True)
+                loss = loss_fn(y_batch, preds)
+                
+            grads = tape.gradient(loss, model.trainable_variables)
+            opt.apply_gradients(zip(grads, model.trainable_variables))
+            loss_per_epoch += float(loss)
+
+        loss_per_epoch /= len(train_dataset)
+
+        # Validation pass
+        val_loss = 0.0
+        for x_val, y_val in test_dataset:
+            val_preds = model(x_val, training=False)
+            val_loss += float(loss_fn(y_val, val_preds))
+
+        val_loss /= len(test_dataset)
+
+        print(f"Epoch {epoch+1}/{epochs} | Training Loss: {loss_per_epoch:.4f} | Val Loss: {val_loss:.4f}")
 
     return model, X_test, y_test
 
-def detect_lstm_anomalies(model, df, seq_len=30, percentile_threshold=95):
+def detect_lstm_anomalies(model, df, seq_len=30, threshold=95):
     """
     Uses the trained LSTM model to detect anomalies by comparing predicted 
     vs. actual closing prices. Any prediction error above the chosen threshold 
@@ -115,27 +174,30 @@ def detect_lstm_anomalies(model, df, seq_len=30, percentile_threshold=95):
     
     Parameters:
     -----------
-    model                   : Trained LSTM model.
-    df                      : Original dataframe with 'close' column.
-    seq_len                 : Must match the sequence length used during training.
-    percentile_threshold    : Error percentile above which data points are flagged as anomalies.
+    model           : Trained LSTM model.
+    df              : Original dataframe with 'close' column.
+    seq_len         : Must match the sequence length used during training.
+    threshold       : Error percentile above which data points are flagged as anomalies.
 
     Returns:
     --------
-    df                      : The same dataframe but with an 'lstm_anomaly' column 
+    df              : The same dataframe but with an 'lstm_anomaly' column 
     """
-    close_prices = df['close'].values
-    X_all, y_all = create_sequences(close_prices, seq_len=seq_len)
+    required_columns = ['open', 'high', 'low', 'close', 'volume']
+    for col in required_columns:
+        assert col in df.columns, f"DataFrame must contain '{col}' column."
     
-    # Predict
+    data_features = df[required_columns].values
+    # close' column is at index 3 for our test datasets
+    X_all, y_all = create_sequences_multi(data_features, seq_len=seq_len, target_col=3)
+    assert len(X_all) > 0 and len(y_all) > 0, "Sequence creation resulted in empty arrays."
+    
     predictions = model.predict(X_all)
     errors = np.abs(predictions.flatten() - y_all)
+    assert len(predictions.flatten()) == len(y_all), "Prediction and target array lengths do not match."
     
-    # Compute threshold based on the specified percentile of errors
-    threshold = np.percentile(errors, percentile_threshold)
-    
-    # Anomaly flags: For the first `seq_len` rows, we can't have predictions
-    anomalies = [False]*seq_len + [err > threshold for err in errors]
+    computed_threshold = np.percentile(errors, threshold)
+    anomalies = [False] * seq_len + [err > computed_threshold for err in errors]
     
     df['lstm_anomaly'] = anomalies
     return df
