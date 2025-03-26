@@ -154,7 +154,6 @@ def train_lstm_model(
 
         loss_per_epoch /= len(train_dataset)
 
-        # Validation pass
         val_loss = 0.0
         for x_val, y_val in test_dataset:
             val_preds = model(x_val, training=False)

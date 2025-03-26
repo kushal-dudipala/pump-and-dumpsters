@@ -1,5 +1,6 @@
 import numpy as np
-from typing import Tuple
+from typing import Tuple, Optional, Union
+
 
 def convert_to_numpy_format(floats: list) -> np.ndarray:
     """
@@ -10,46 +11,53 @@ def convert_to_numpy_format(floats: list) -> np.ndarray:
 
 def train_test_split(
     X: np.ndarray,
-    y: np.ndarray,
+    y: Optional[np.ndarray] = None,
     test_size: float = 0.2,
     shuffle: bool = False
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> Union[Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]:
     """
     Splits arrays X and y into train and test subsets.
  
     Parameters
     ----------
-    X : Feature array, of shape (n_samples, ...)
-    y : Target array, of shape (n_samples, ...)
-    test_size : Fraction of the data to reserve for test, default 20%
-    shuffle : Whether to shuffle the data before splitting, default False.
+    X               : Feature array, of shape (n_samples, ...)
+    y               : Target array, of shape (n_samples, ...)
+    test_size       : Fraction of the data to reserve for test, default 20%
+    shuffle         : Whether to shuffle the data before splitting, default False.
  
     Returns
     -------
-    X_train : np.ndarray
-    X_test  : np.ndarray
-    y_train : np.ndarray
-    y_test  : np.ndarray
+    If y is provided:
+        X_train     : np.ndarray
+        X_test      : np.ndarray
+        y_train     : np.ndarray
+        y_test      : np.ndarray
+    If y is not provided:
+        X_train     : np.ndarray
+        X_test      : np.ndarray
     """
     n_samples = len(X)
     test_count = int(n_samples * test_size)
- 
+    
     if shuffle:
         indices = np.arange(n_samples)
         np.random.shuffle(indices)
         X = X[indices]
-        y = y[indices]
- 
-    # training is the first (n_samples - test_count) samples
-    # testing is the last test_count samples
+        if y is not None:
+            y = y[indices]
+    
+    # The training set is the first (n_samples - test_count) samples,
+    # and the test set is the remaining test_count samples.
     split_index = n_samples - test_count
- 
     X_train = X[:split_index]
-    y_train = y[:split_index]
-    X_test  = X[split_index:]
-    y_test  = y[split_index:]
- 
-    return X_train, X_test, y_train, y_test
+    X_test = X[split_index:]
+    
+    if y is not None:
+        y_train = y[:split_index]
+        y_test = y[split_index:]
+        return X_train, X_test, y_train, y_test
+    else:
+        return X_train, X_test
 
 def batching(X: np.ndarray, y: np.ndarray, batch_size: int):
     """
@@ -65,6 +73,7 @@ def batching(X: np.ndarray, y: np.ndarray, batch_size: int):
     -------
     batches : A list where each tuple is (X_batch, y_batch)
     """
+    assert len(X) == len(y), ("X and y must have the same number of samples.")
     batches = []
     n_samples = len(X)
     for i in range(0, n_samples, batch_size):
