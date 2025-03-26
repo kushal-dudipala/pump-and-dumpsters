@@ -25,15 +25,16 @@ def evaluate_model(df):
     
     # Check which anomaly detection methods are present in the dataframe
     if 'autoencoder_anomaly' in df.columns:
-        df['autoencoder_anomaly'] = df['autoencoder_anomaly'].fillna(False).astype(bool).astype(int)
+        df['autoencoder_anomaly'] = df['autoencoder_anomaly'].infer_objects(False)
+        df['autoencoder_anomaly'] = df['autoencoder_anomaly'].infer_objects(copy=False).astype(bool).astype(int)
         anomaly_methods.append('autoencoder_anomaly')
     
     if 'lstm_anomaly' in df.columns:
-        df['lstm_anomaly'] = df['lstm_anomaly'].fillna(False).astype(bool).astype(int)
+        df['lstm_anomaly'] = df['lstm_anomaly'].infer_objects(copy=False).astype(bool).astype(int)
         anomaly_methods.append('lstm_anomaly')
     
     if 'anomaly' in df.columns:  # Z-score anomaly
-        df['anomaly'] = df['anomaly'].fillna(False).astype(bool).astype(int)
+        df['anomaly'] = df['anomaly'].infer_objects(copy=False).astype(bool).astype(int)
         anomaly_methods.append('anomaly')
     
     # If we have at least two methods to compare
@@ -214,13 +215,13 @@ def clean_cryptocurrency_data(
         # For price data, forward fill is often appropriate (carry last known price forward)
         price_cols = [col for col in cleaned_df.columns if col in ['open', 'high', 'low', 'close']]
         if price_cols:
-            cleaned_df[price_cols] = cleaned_df[price_cols].fillna(method='ffill')
+            cleaned_df[price_cols] = cleaned_df[price_cols].fillna(method='ffill').infer_objects(copy=False)
             # If there are still NaNs at the beginning, backward fill
-            cleaned_df[price_cols] = cleaned_df[price_cols].fillna(method='bfill')
+            cleaned_df[price_cols] = cleaned_df[price_cols].fillna(method='bfill').infer_objects(copy=False)
         
         # For volume, replace NaN with 0 (no trading)
         if 'volume' in cleaned_df.columns:
-            cleaned_df['volume'] = cleaned_df['volume'].fillna(0)
+            cleaned_df['volume'] = cleaned_df['volume'].fillna(0).infer_objects(copy=False)
         
         # For any remaining NaNs, use column median
         cleaned_df = cleaned_df.fillna(cleaned_df.median(numeric_only=True))
