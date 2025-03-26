@@ -12,10 +12,7 @@
 
 # Load necessary modules (modify as per your HPC environment)
 module load anaconda3 # If Conda is available
-source activate my_env # Activate your Conda environment
+source activate pumpdumpsters # Activate your Conda environment
 
-# Debugging: Print the GPU details
 echo "Running on GPU:"
-
-# Run the DeepSeek Python script
 python scripts/train_model.py
