@@ -47,3 +47,6 @@ scripts/*.log
 
 # Ignore pumpdumpsters module
 pumpdumpsters.egg-info/
+
+# Ignore test files
+sandbox.py
