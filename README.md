@@ -35,14 +35,10 @@ Ronak Argawal, Kushal Dudipala, Rashmith Repala
 - [ ] **write checkin** – Write our checkin proposal *Together*
 
 ## Future To-Do
-- [ ] `lstm_model.py` – Implement Hybrid CNN model *(Together)*
+- [ ] `hybrid_cnn_lstm.py` – Implement Hybrid CNN model *(Together)*
 - [ ] **data_cleaning.py** – Clean data if necessary *(Ronak)*
 - [ ] **feature_learning.py** – Implement feature learning if necessary *(Together)*
 
-## Notes 3/22
-* Pumpdumpsters is our evaluation python module. We need to go through and make each evaluation metric
-* Wrote a skeleton script for auto encoder, but we need to go make better (lots of hardcoding!)
-* Read over lstm model, may potentially need work
-* Need a dataset. Right now we are locally using a test.csv
+## Notes 3/26
+* Need to fix visualizations in pumpdumpsters
 * Added pace support, but we may end up using elsewhere.
-* Added sandbox.py, but we want to eventually remove it once we have all the code working.
