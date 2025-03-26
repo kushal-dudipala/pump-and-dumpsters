@@ -54,7 +54,7 @@ def train_lstm_model(
     df: pd.DataFrame,
     seq_len: int = 30,
     test_size: float = 0.2,
-    epochs: int = 10,
+    epochs: int = 20,
     batch_size: int = 16,
     learning_rate: float = 1e-3,   
     optimizer: str = 'adam',
