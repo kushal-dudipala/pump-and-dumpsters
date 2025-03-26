@@ -47,17 +47,17 @@ def evaluate_model(df):
                 print(f"\nEvaluating {method} against {ground_truth}:")
                 
                 # Classification report
-                report = classification_report(df[ground_truth], df[method], output_dict=True)
-                print(classification_report(df[ground_truth], df[method]))
+                report = classification_report(df[ground_truth], df[method], output_dict=True, zero_division=0)
+                print(classification_report(df[ground_truth], df[method], zero_division=0))
                 metrics_dict[f"{method}_report"] = report
                 
                 # Confusion matrix
-                cm = confusion_matrix(df[ground_truth], df[method])
+                cm = confusion_matrix(df[ground_truth], df[method], labels=[0, 1])
                 plot_confusion_matrix(cm, [0, 1], title=f"Confusion Matrix: {method}")
                 metrics_dict[f"{method}_confusion_matrix"] = cm
                 
                 # Precision, recall, F1
-                precision, recall, f1, _ = precision_recall_fscore_support(df[ground_truth], df[method], average='binary')
+                precision, recall, f1, _ = precision_recall_fscore_support(df[ground_truth], df[method], average='binary', zero_division=0)
                 metrics_dict[f"{method}_precision"] = precision
                 metrics_dict[f"{method}_recall"] = recall
                 metrics_dict[f"{method}_f1"] = f1
@@ -107,16 +107,15 @@ def plot_roc_curve(fpr, tpr, roc_auc, title='ROC Curve'):
 def plot_anomaly_distribution(df, anomaly_col):
     """Plots the distribution of anomalies over time."""
     plt.figure(figsize=(12, 6))
-    plt.plot(df['timestamp'], df['close'], label='Price', alpha=0.7)
-    plt.scatter(df[df[anomaly_col] == 1]['timestamp'], 
-                df[df[anomaly_col] == 1]['close'], 
+    plt.plot(df['Date'], df['Close'], label='Price', alpha=0.7)
+    plt.scatter(df[df[anomaly_col] == 1]['Date'], 
+                df[df[anomaly_col] == 1]['Close'], 
                 color='red', label=f'{anomaly_col}')
     plt.title(f'Distribution of {anomaly_col} Over Time')
     plt.xlabel('Date')
     plt.ylabel('Price')
     plt.legend()
     plt.show()
-
 def compare_all_anomaly_methods(df):
     """
     Creates a visualization comparing all anomaly detection methods.
