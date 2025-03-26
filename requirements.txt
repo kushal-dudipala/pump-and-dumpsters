@@ -17,5 +17,8 @@ ta>=0.10.0
 pytrends>=4.9.0
 kaggle
 
+# Muon
+git+https://github.com/KellerJordan/Muon.git
+
 # Custom evaluation library- pumpdumpsters
 # -e git+https://github.com/kushal-dudipala/pump-and-dumpsters.git@57fa3ecb2a54a395338024a59bbeb52d83fa7f96#egg=pumpdumpsters&subdirectory=pumpdumpsters
