@@ -161,7 +161,7 @@ def train_lstm_model(
 
         val_loss /= len(test_dataset)
 
-        print(f"Epoch {epoch+1}/{epochs} | Training Loss: {loss_per_epoch:.4f} | Val Loss: {val_loss:.4f}")
+        print(f"Epoch {epoch+1}/{epochs} | Train Loss: {loss_per_epoch:0.4f} | Val Loss: {val_loss:0.4f}")
 
     return model, X_test, y_test
 
