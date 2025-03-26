@@ -1,19 +1,15 @@
 import os
 import json
-from kaggle.api.kaggle_api_extended import KaggleApi
-
+from kaggle import KaggleApi
 # Define the correct path to kaggle.json inside your project
 KAGGLE_JSON_PATH = os.path.abspath("data/kaggle.json")  # Update this if needed
 
 def setup_kaggle_credentials():
     """Load Kaggle API credentials and set them as environment variables."""
-    print("1")
     if not os.path.exists(KAGGLE_JSON_PATH):
         raise FileNotFoundError(f"Kaggle credentials not found at {KAGGLE_JSON_PATH}. Please check the path.")
-    print("2")
     with open("data/kaggle.json", "r") as f:
         creds = json.load(f)
-    print("3")
     # Set API credentials as environment variables
     os.environ["KAGGLE_USERNAME"] = creds["username"]
     os.environ["KAGGLE_KEY"] = creds["key"]
@@ -35,5 +31,3 @@ def download_dataset():
 
 if __name__ == '__main__':
     download_dataset()
-    
-    

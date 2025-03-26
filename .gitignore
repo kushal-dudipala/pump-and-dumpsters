@@ -19,6 +19,7 @@ data/raw/
 data/processed/
 .cache/
 *.env
+kaggle.json
 
 # Ignore model checkpoints
 models/checkpoints/
