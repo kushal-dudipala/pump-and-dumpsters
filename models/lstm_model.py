@@ -5,7 +5,13 @@ from tensorflow.keras import Input
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from typing import Tuple, Union
-from muon import Muon
+# Make Muon optional to avoid errors if not installed
+try:
+    from muon import Muon
+    HAS_MUON = True
+except ImportError:
+    HAS_MUON = False
+    print("Muon optimizer not found. Will use standard optimizers instead.")
 from models.utils import convert_to_numpy_format, train_test_split, batching
 
 
@@ -141,8 +147,12 @@ def train_lstm_model(
     ])
    
     if optimizer == 'muon':
-        # https://github.com/KellerJordan/Muon
-        opt = Muon(learning_rate=learning_rate)
+        if HAS_MUON:
+            # https://github.com/KellerJordan/Muon
+            opt = Muon(learning_rate=learning_rate)
+        else:
+            print("Warning: Requested Muon optimizer but it's not available. Using Adam instead.")
+            opt = tf.keras.optimizers.Adam(learning_rate=learning_rate)
     else:
         valid_optimizers = {
             'adam': tf.keras.optimizers.Adam,

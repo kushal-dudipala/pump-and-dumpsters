@@ -1,0 +1,4 @@
+Model,Accuracy,Precision,Recall,F1_Score,Anomalies_Detected
+lstm,0.0,0.0,0.0,0.0,0
+autoencoder,0.2,0.0,0.0,0.0,0
+hybrid,0.0,0.0,0.0,0.0,0
