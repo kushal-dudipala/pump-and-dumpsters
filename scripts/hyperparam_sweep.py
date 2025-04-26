@@ -20,7 +20,7 @@ try:
 
     # Define hyperparameter grid
     if model == "lstm":
-        seq_lens = [3, 5, 7]
+        seq_lens = [3, 5]
         epochs_list = [50]
         lstm_units = [32, 64, 128]
         learning_rates = [0.001, 0.01]
@@ -32,7 +32,7 @@ try:
         learning_rates = [0.001, 0.01]
         param_grid = list(itertools.product(epochs_list, cnn_filters, kernel_sizes, learning_rates))
     elif model == "hybrid":
-        seq_lens = [3, 5, 7]
+        seq_lens = [3, 5]
         epochs_list = [50]
         cnn_filters = [32, 64, 128]
         lstm_units = [32, 64, 128]
