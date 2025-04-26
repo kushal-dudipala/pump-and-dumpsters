@@ -2,6 +2,7 @@ import argparse
 import itertools
 import subprocess
 import traceback
+from utils.save_best_hyperparams import save_best_hyperparams
 
 parser = argparse.ArgumentParser(description="Run hyperparameter sweep for a specified model.")
 parser.add_argument(
@@ -83,6 +84,7 @@ try:
     print("\n=== HYPERPARAMETER SWEEP COMPLETE ===")
     print(f"Best Params: {best_params}")
     print(f"Best Score (F1): {best_score}")
+    save_best_hyperparams(model, best_params, best_score)
 
 except Exception as e:
     print("\n=== ERROR DURING SWEEP ===")
