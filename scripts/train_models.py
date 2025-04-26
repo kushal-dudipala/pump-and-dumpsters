@@ -1,5 +1,6 @@
 import argparse
 import traceback
+import os
 from models.lstm_model import train_lstm_model, detect_lstm_anomalies
 from models.auto_encoder import train_autoencoder, detect_autoencoder_anomalies
 from models.hybrid_cnn_lstm import train_hybrid_cnn_lstm_model, detect_hybrid_anomalies
@@ -28,20 +29,6 @@ args = parser.parse_args()
 def train(model_type, df, **kwargs):
     """
     Trains the specified model and detects anomalies.
-
-    Parameters
-    ----------
-    model_type : str
-        The type of model to train ('lstm', 'cnn', 'hybrid').
-    df : pd.DataFrame
-        The preprocessed data.
-    kwargs : dict
-        Extra training parameters.
-
-    Returns
-    -------
-    trained_model : Trained Keras model
-    df_with_anomalies : DataFrame with anomalies detected
     """
     if model_type == "lstm":
         model, X_test, y_test = train_lstm_model(df, **kwargs)
@@ -54,16 +41,21 @@ def train(model_type, df, **kwargs):
         df_with_anomalies = detect_hybrid_anomalies(model, df.copy(), seq_len=kwargs.get("seq_len", 30))
     else:
         raise ValueError(f"Unknown model type '{model_type}'. Must be one of ['lstm', 'cnn', 'hybrid'].")
-    
+
     return model, df_with_anomalies
 
 try:
     print(f"\n=== STARTING {args.model.upper()} MODEL TRAINING ===")
 
-    # Load and preprocess data
-    df = load_and_preprocess_data(filename=args.filename)
-
-    # Train and detect
+    # --- UPDATED THIS SECTION --- 
+    if args.filename is None:
+        print("No --filename provided. Using merged processed file...")
+        merged_file = os.path.join("data", "processed", "merged_cryptos.csv")
+        df = load_and_preprocess_data(filename=merged_file)
+    else:
+        df = load_and_preprocess_data(filename=args.filename)
+    
+    # --- CONTINUES ---
     model, df_with_anomalies = train(
         args.model,
         df,
@@ -85,7 +77,3 @@ except Exception as e:
     print("\n=== ERROR DURING TRAINING ===")
     print(f"Exception: {e}")
     traceback.print_exc()
-
-
-
-    
