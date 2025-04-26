@@ -49,20 +49,24 @@ try:
 
     # Define hyperparameter grid
     if model == "lstm":
-        seq_lens = [3, 5]
-        epochs_list = [5, 10]
-        lstm_units = [32, 64]
-        param_grid = list(itertools.product(seq_lens, epochs_list, lstm_units))
+        seq_lens = [3, 5, 7]
+        epochs_list = [50]
+        lstm_units = [32, 64, 128]
+        learning_rates = [0.001, 0.01]
+        param_grid = list(itertools.product(seq_lens, epochs_list, lstm_units, learning_rates))
     elif model == "cnn":
-        epochs_list = [5, 10]
-        cnn_filters = [32, 64]
-        param_grid = list(itertools.product(epochs_list, cnn_filters))
+        epochs_list = [50]
+        cnn_filters = [32, 64, 128]
+        kernel_sizes = [3, 5]
+        learning_rates = [0.001, 0.01]
+        param_grid = list(itertools.product(epochs_list, cnn_filters, kernel_sizes, learning_rates))
     elif model == "hybrid":
-        seq_lens = [3, 5]
-        epochs_list = [5, 10]
-        cnn_filters = [32, 64]
-        lstm_units = [32, 64]
-        param_grid = list(itertools.product(seq_lens, epochs_list, cnn_filters, lstm_units))
+        seq_lens = [3, 5, 7]
+        epochs_list = [50]
+        cnn_filters = [32, 64, 128]
+        lstm_units = [32, 64, 128]
+        learning_rates = [0.001, 0.01]
+        param_grid = list(itertools.product(seq_lens, epochs_list, cnn_filters, lstm_units, learning_rates))
 
     # Track best model and results
     best_score = -np.inf
@@ -74,32 +78,36 @@ try:
         print(f"Parameters: {params}")
 
         if model == "lstm":
-            seq_len, epochs, units = params
+            seq_len, epochs, units, lr = params
             trained_model, X_test, y_test = model_dict[model]["train"](
                 df,
                 seq_len=seq_len,
                 epochs=epochs,
-                lstm_units=units
+                lstm_units=units,
+                learning_rate=lr
             )
             df_temp = model_dict[model]["detect"](trained_model, df.copy(), seq_len=seq_len, threshold=95)
             
         elif model == "cnn":
-            epochs, filters = params
+            epochs, filters, kernel_size, lr = params
             trained_model, X_test, y_test = model_dict[model]["train"](
                 df,
                 epochs=epochs,
-                cnn_filters=filters
+                cnn_filters=filters,
+                kernel_size=kernel_size,
+                learning_rate=lr
             )
             df_temp = model_dict[model]["detect"](trained_model, df.copy(), threshold=95)
             
         elif model == "hybrid":
-            seq_len, epochs, filters, units = params
+            seq_len, epochs, filters, units, lr = params
             trained_model, X_test, y_test = model_dict[model]["train"](
                 df,
                 seq_len=seq_len,
                 epochs=epochs,
                 cnn_filters=filters,
-                lstm_units=units
+                lstm_units=units,
+                learning_rate=lr
             )
             df_temp = model_dict[model]["detect"](trained_model, df.copy(), seq_len=seq_len, threshold=95)
 
@@ -131,6 +139,3 @@ def get_output():
 
 def get_best_params():
     return best_params
-
-
-   
