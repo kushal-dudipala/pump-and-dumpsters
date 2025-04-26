@@ -1,6 +1,12 @@
 import argparse
 import traceback
 import os
+import sys
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+sys.path.append(project_root)
+
 from models.lstm_model import train_lstm_model, detect_lstm_anomalies
 from models.auto_encoder import train_autoencoder, detect_autoencoder_anomalies
 from models.hybrid_cnn_lstm import train_hybrid_cnn_lstm_model, detect_hybrid_anomalies
