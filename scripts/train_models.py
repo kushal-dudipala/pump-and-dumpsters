@@ -47,10 +47,14 @@ def train(model_type, df, **kwargs):
 try:
     print(f"\n=== STARTING {args.model.upper()} MODEL TRAINING ===")
 
-    # --- UPDATED THIS SECTION --- 
     if args.filename is None:
         print("No --filename provided. Using merged processed file...")
-        merged_file = os.path.join("data", "processed", "merged_cryptos.csv")
+
+        # Dynamically set full absolute path
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
+        merged_file = os.path.join(project_root, "data", "processed", "merged_cryptos.csv")
+
+        print(f"Loading data from: {merged_file}")
         df = load_and_preprocess_data(filename=merged_file)
     else:
         df = load_and_preprocess_data(filename=args.filename)
