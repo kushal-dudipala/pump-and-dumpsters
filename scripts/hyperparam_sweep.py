@@ -6,7 +6,7 @@ import traceback
 from models.lstm_model import train_lstm_model, detect_lstm_anomalies
 from models.auto_encoder import train_autoencoder, detect_autoencoder_anomalies
 from models.hybrid_cnn_lstm import train_hybrid_cnn_lstm_model, detect_hybrid_anomalies
-from pumpdumpsters.data_loader import load_and_preprocess_data
+from prepreprocessing.data_loader import load_and_preprocess_data
 from pumpdumpsters.run_all import run_all_evaluation_metrics
 
 parser = argparse.ArgumentParser(description="Run hyperparameter sweep for a specified model.")

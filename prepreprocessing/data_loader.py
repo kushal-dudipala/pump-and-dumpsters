@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 from sklearn.preprocessing import MinMaxScaler
+from prepreprocessing.feature_learning import extract_features
 
 def load_and_preprocess_data(filename=None):
     """
@@ -18,9 +19,9 @@ def load_and_preprocess_data(filename=None):
     if filename is None or filename == "test.csv":
         # Look for sample data in the data/raw directory
         default_paths = [
-            "data/raw/sample_bitcoin.csv",  # From project root
-            "../data/raw/sample_bitcoin.csv",  # If running from inside pumpdumpsters
-            "sample_bitcoin.csv"  # Directly in current directory
+            "data/raw/coin_Bitcoin.csv",  # From project root
+            "../data/raw/coin_Bitcoin.csv",  # If running from inside pumpdumpsters
+            "coin_Bitcoin.csv"  # Directly in current directory
         ]
         
         for path in default_paths:
@@ -56,6 +57,8 @@ def load_and_preprocess_data(filename=None):
     df[['Open', 'High', 'Low', 'Close', 'Volume']] = scaler.fit_transform(
         df[['Open', 'High', 'Low', 'Close', 'Volume']]
     )
+    
+    df = extract_features(df)
     
     # Optionally, sort the DataFrame by date to ensure time-series order
     df.sort_values(by=['Symbol', 'Date'], inplace=True)

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
-from pumpdumpsters.data_loader import load_and_preprocess_data
+from prepreprocessing.data_loader import load_and_preprocess_data
 
 # Run the whole pipeline first
 from sandbox import run_model_pipeline

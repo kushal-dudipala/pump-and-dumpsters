@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from pumpdumpsters.data_loader import load_and_preprocess_data
+from prepreprocessing.data_loader import load_and_preprocess_data
 
 def test_data_loading():
     """Test if data loading works correctly."""
