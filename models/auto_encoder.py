@@ -132,7 +132,7 @@ def train_autoencoder(
 
     return model, X_test
 
-def detect_autoencoder_anomalies(model, X_test, df, threshold: float = 95):
+def detect_autoencoder_anomalies(model, X_test, df):
     """
     Uses the trained Autoencoder to detect anomalies.
     
@@ -155,7 +155,9 @@ def detect_autoencoder_anomalies(model, X_test, df, threshold: float = 95):
     assert X_pred.shape[0] == X_test.shape[0], ("The number of predictions must match the number of test samples.")
     mse = np.mean(np.abs(X_pred - X_test), axis=1)
     
-    computed_threshold = np.percentile(mse, threshold)
+    mean = np.mean(mse)
+    std = np.std(mse)
+    computed_threshold = mean + 3 * std  # 3-sigma rule
     anomalies = mse > computed_threshold
 
     # Assume that X_test corresponds to the last N rows in df:
