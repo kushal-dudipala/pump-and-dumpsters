@@ -31,18 +31,28 @@ def train(model_type, df, **kwargs):
     Trains the specified model and detects anomalies.
     """
     if model_type == "lstm":
-        model, X_test, y_test = train_lstm_model(df, **kwargs)
-        df_with_anomalies = detect_lstm_anomalies(model, df.copy(), seq_len=kwargs.get("seq_len", 30))
+        allowed_args = ['seq_len', 'epochs', 'batch_size', 'learning_rate', 'dropout_rate', 'test_size']
+        model_kwargs = {k: kwargs[k] for k in allowed_args if k in kwargs}
+        model, X_test, y_test = train_lstm_model(df, **model_kwargs)
+        df_with_anomalies = detect_lstm_anomalies(model, df.copy(), seq_len=model_kwargs.get("seq_len", 30))
+
     elif model_type == "cnn":
-        model, X_test = train_autoencoder(df, **kwargs)
+        allowed_args = ['epochs', 'batch_size', 'learning_rate', 'dropout_rate', 'test_size']
+        model_kwargs = {k: kwargs[k] for k in allowed_args if k in kwargs}
+        model, X_test = train_autoencoder(df, **model_kwargs)
         df_with_anomalies = detect_autoencoder_anomalies(model, X_test, df.copy())
+
     elif model_type == "hybrid":
-        model, X_test, y_test = train_hybrid_cnn_lstm_model(df, **kwargs)
-        df_with_anomalies = detect_hybrid_anomalies(model, df.copy(), seq_len=kwargs.get("seq_len", 30))
+        allowed_args = ['seq_len', 'epochs', 'batch_size', 'learning_rate', 'dropout_rate', 'cnn_filters', 'cnn_kernel_size', 'lstm_units', 'test_size']
+        model_kwargs = {k: kwargs[k] for k in allowed_args if k in kwargs}
+        model, X_test, y_test = train_hybrid_cnn_lstm_model(df, **model_kwargs)
+        df_with_anomalies = detect_hybrid_anomalies(model, df.copy(), seq_len=model_kwargs.get("seq_len", 30))
+
     else:
         raise ValueError(f"Unknown model type '{model_type}'. Must be one of ['lstm', 'cnn', 'hybrid'].")
 
     return model, df_with_anomalies
+
 
 try:
     print(f"\n=== STARTING {args.model.upper()} MODEL TRAINING ===")
