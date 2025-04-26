@@ -49,7 +49,11 @@ try:
         print(f"Parameters: {params}")
 
         # Construct CLI command
-        cmd = ["python", "/Users/kushaldudipala/codebase/CS4644/project/pump-and-dumpsters/scripts/train_models.py", "--model", model]
+        import os
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        train_models_path = os.path.join(current_dir, "train_models.py")
+
+        cmd = ["python", train_models_path, "--model", model]
         if model == "lstm":
             seq_len, epochs, units, lr = params
             cmd += ["--seq_len", str(seq_len), "--epochs", str(epochs), "--lstm_units", str(units), "--learning_rate", str(lr)]
