@@ -37,6 +37,10 @@ def evaluate_model(df):
         df['anomaly'] = df['anomaly'].infer_objects(copy=False).astype(bool).astype(int)
         anomaly_methods.append('anomaly')
     
+    if 'hybrid_anomaly' in df.columns:  # Hybrid anomaly
+        df['hybrid_anomaly'] = df['hybrid_anomaly'].infer_objects(copy=False).astype(bool).astype(int)
+        anomaly_methods.append('hybrid_anomaly')
+    
     # If we have at least two methods to compare
     if len(anomaly_methods) >= 2:
         # Use z-score anomaly as ground truth if available, otherwise use the first method
