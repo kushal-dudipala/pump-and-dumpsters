@@ -10,5 +10,6 @@
 #SBATCH --mail-type=END,FAIL                    # Email notification (optional)
 #SBATCH --mail-user=kdudipala3@gatech.edu       # Replace with your email
 
+source ~/miniconda3/etc/profile.d/conda.sh
 conda activate pumpdumpsters-env
 bash hyper_param_sweep_pace.sh

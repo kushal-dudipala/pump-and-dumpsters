@@ -10,18 +10,20 @@
 #SBATCH --mail-type=END,FAIL                    # Email notification (optional)
 #SBATCH --mail-user=kdudipala3@gatech.edu       # Replace with your email
 
-# Load necessary modules (modify as per your HPC environment)
-module load anaconda3 # If Conda is available
-source activate pumpdumpsters-env # Activate your Conda environment
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate pumpdumpsters-env
 
-# Run hyperparameter sweep for all models
+# === Move into correct working directory ===
+cd $SLURM_SUBMIT_DIR  
+
+# === Run sweep ===
 echo "Running hyperparameter sweep for LSTM model..."
-python scripts/hyperparam_sweep.py --model lstm
+python hyperparam_sweep.py --model lstm
 
 echo "Running hyperparameter sweep for CNN model..."
-python scripts/hyperparam_sweep.py --model cnn
+python hyperparam_sweep.py --model cnn
 
 echo "Running hyperparameter sweep for Hybrid model..."
-python scripts/hyperparam_sweep.py --model hybrid
+python hyperparam_sweep.py --model hybrid
 
 echo "Hyperparameter sweep completed for all models. Check the saved JSON files for optimal hyperparameters."
