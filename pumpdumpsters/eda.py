@@ -7,6 +7,7 @@ def plot_price_trends(df):
     plt.title("Cryptocurrency Closing Prices Over Time")
     plt.xlabel("Date")
     plt.ylabel("Normalized Price")
+    plt.savefig("plots/price_trends.png")
     plt.show()
 
 def plot_volume_trends(df):
@@ -16,4 +17,5 @@ def plot_volume_trends(df):
     plt.title("Trading Volume Over Time")
     plt.xlabel("Date")
     plt.ylabel("Volume")
+    plt.savefig("plots/volume_trends.png")
     plt.show()

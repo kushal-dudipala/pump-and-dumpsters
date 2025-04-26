@@ -17,4 +17,5 @@ def plot_zscore_anomalies(df):
     plt.ylabel("Price")
     plt.title("Anomaly Detection with Z-score")
     plt.legend()
+    plt.savefig("plots/zscore_anomalies.png")
     plt.show()

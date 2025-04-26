@@ -94,6 +94,7 @@ def plot_confusion_matrix(cm, classes, title='Confusion Matrix'):
     plt.title(title)
     plt.ylabel('True Label')
     plt.xlabel('Predicted Label')
+    plt.savefig(f"plots/{title.replace(' ', '_').lower()}.png")
     plt.show()
 
 def plot_roc_curve(fpr, tpr, roc_auc, title='ROC Curve'):
@@ -107,6 +108,7 @@ def plot_roc_curve(fpr, tpr, roc_auc, title='ROC Curve'):
     plt.ylabel('True Positive Rate')
     plt.title(title)
     plt.legend(loc="lower right")
+    plt.savefig(f"plots/{title.replace(' ', '_').lower()}.png")
     plt.show()
 
 def plot_anomaly_distribution(df, anomaly_col):
@@ -120,7 +122,9 @@ def plot_anomaly_distribution(df, anomaly_col):
     plt.xlabel('Date')
     plt.ylabel('Price')
     plt.legend()
+    plt.savefig(f"plots/{anomaly_col}_distribution.png")
     plt.show()
+    
 def compare_all_anomaly_methods(df):
     """
     Creates a visualization comparing all anomaly detection methods.
@@ -156,6 +160,7 @@ def compare_all_anomaly_methods(df):
     # Set common x-label
     plt.xlabel('Date')
     plt.tight_layout()
+    plt.savefig("plots/anomaly_comparison.png")
     plt.show()
     
     # Create a Venn diagram-like visualization for overlap
