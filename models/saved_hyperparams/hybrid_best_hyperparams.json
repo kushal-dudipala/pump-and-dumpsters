@@ -1,0 +1,12 @@
+{
+    "model": "hybrid",
+    "best_params": [
+        30,
+        50,
+        32,
+        32,
+        0.001
+    ],
+    "best_score": 0.84,
+    "timestamp": "2025-04-26 12:59:06"
+}
