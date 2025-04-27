@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import os
 
 def apply_mean_reversion_strategy(df):
     """Identifies trading opportunities using a mean reversion strategy.
@@ -20,7 +21,7 @@ def apply_mean_reversion_strategy(df):
     )
     return df
 
-def plot_mean_reversion(df):
+def plot_mean_reversion(df, dir):
     """Plots trading signals based on the mean reversion strategy."""
     plt.figure(figsize=(12,6))
     plt.plot(df['Date'], df['Close'], label='Price')
@@ -35,4 +36,5 @@ def plot_mean_reversion(df):
     plt.ylabel("Price")
     plt.title("Mean Reversion Trading Strategy")
     plt.legend()
+    plt.savefig(os.path.join(dir, "mean_reversion_strategy.png"))
     plt.show()

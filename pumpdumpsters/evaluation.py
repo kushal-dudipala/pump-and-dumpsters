@@ -4,8 +4,9 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from typing import Union, Optional, List, Tuple
+import os
 
-def evaluate_model(df):
+def evaluate_model(df, dir):
     """
     Compares anomalies from different methods with comprehensive metrics.
     
@@ -58,7 +59,7 @@ def evaluate_model(df):
                 
                 # Confusion matrix
                 cm = confusion_matrix(df[ground_truth], df[method], labels=[0, 1])
-                plot_confusion_matrix(cm, [0, 1], title=f"Confusion Matrix: {method}")
+                plot_confusion_matrix(cm, [0, 1], dir=dir, title=f"Confusion Matrix: {method}")
                 metrics_dict[f"{method}_confusion_matrix"] = cm
                 
                 # Precision, recall, F1
@@ -72,7 +73,7 @@ def evaluate_model(df):
                     score_col = f"{method.replace('_anomaly', '')}_score"
                     fpr, tpr, _ = roc_curve(df[ground_truth], df[score_col])
                     roc_auc = auc(fpr, tpr)
-                    plot_roc_curve(fpr, tpr, roc_auc, title=f"ROC Curve: {method}")
+                    plot_roc_curve(fpr, tpr, roc_auc, dir=dir, title=f"ROC Curve: {method}")
                     metrics_dict[f"{method}_auc"] = roc_auc
     
     # Evaluate each method individually
@@ -83,21 +84,22 @@ def evaluate_model(df):
         metrics_dict[f"{method}_percentage"] = anomaly_percentage
         
         # Plot anomaly distribution over time
-        plot_anomaly_distribution(df, method)
+        plot_anomaly_distribution(df, method, dir)
     
     return metrics_dict
 
-def plot_confusion_matrix(cm, classes, title='Confusion Matrix'):
+def plot_confusion_matrix(cm, classes, dir, title='Confusion Matrix'):
     """Plots confusion matrix with a heatmap."""
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=classes, yticklabels=classes)
     plt.title(title)
     plt.ylabel('True Label')
     plt.xlabel('Predicted Label')
-    plt.savefig(f"plots/{title.replace(' ', '_').lower()}.png")
+    filepath = os.path.join(dir, f"{title.replace(' ', '_').lower()}.png")
+    plt.savefig(filepath)
     plt.show()
 
-def plot_roc_curve(fpr, tpr, roc_auc, title='ROC Curve'):
+def plot_roc_curve(fpr, tpr, roc_auc, dir, title='ROC Curve'):
     """Plots ROC curve with AUC value."""
     plt.figure(figsize=(8, 6))
     plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
@@ -108,10 +110,11 @@ def plot_roc_curve(fpr, tpr, roc_auc, title='ROC Curve'):
     plt.ylabel('True Positive Rate')
     plt.title(title)
     plt.legend(loc="lower right")
-    plt.savefig(f"plots/{title.replace(' ', '_').lower()}.png")
+    filepath = os.path.join(dir, f"{title.replace(' ', '_').lower()}.png")
+    plt.savefig(filepath)
     plt.show()
 
-def plot_anomaly_distribution(df, anomaly_col):
+def plot_anomaly_distribution(df, anomaly_col, dir):
     """Plots the distribution of anomalies over time."""
     plt.figure(figsize=(12, 6))
     plt.plot(df['Date'], df['Close'], label='Price', alpha=0.7)
@@ -122,10 +125,11 @@ def plot_anomaly_distribution(df, anomaly_col):
     plt.xlabel('Date')
     plt.ylabel('Price')
     plt.legend()
-    plt.savefig(f"plots/{anomaly_col}_distribution.png")
+    filepath = os.path.join(dir, f"{anomaly_col}_distribution.png")
+    plt.savefig(filepath)
     plt.show()
     
-def compare_all_anomaly_methods(df):
+def compare_all_anomaly_methods(df, dir):
     """
     Creates a visualization comparing all anomaly detection methods.
     
@@ -160,7 +164,8 @@ def compare_all_anomaly_methods(df):
     # Set common x-label
     plt.xlabel('Date')
     plt.tight_layout()
-    plt.savefig("plots/anomaly_comparison.png")
+    filepath = os.path.join(dir, "anomaly_comparison.png")
+    plt.savefig(filepath)
     plt.show()
     
     # Create a Venn diagram-like visualization for overlap

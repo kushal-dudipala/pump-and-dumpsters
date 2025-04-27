@@ -1,5 +1,6 @@
 from scipy.stats import zscore
 import matplotlib.pyplot as plt
+import os
 
 def detect_anomalies_zscore(df):
     """Detects anomalies using Z-score analysis."""
@@ -8,7 +9,7 @@ def detect_anomalies_zscore(df):
     df['anomaly'] = df['z_score'].apply(lambda x: 1 if abs(x) > 3 else 0)
     return df
 
-def plot_zscore_anomalies(df):
+def plot_zscore_anomalies(df, dir):
     """Plots anomalies detected using Z-score method."""
     plt.figure(figsize=(12,6))
     plt.plot(df['Date'], df['Close'], label='Price')
@@ -17,5 +18,5 @@ def plot_zscore_anomalies(df):
     plt.ylabel("Price")
     plt.title("Anomaly Detection with Z-score")
     plt.legend()
-    plt.savefig("plots/zscore_anomalies.png")
+    plt.savefig(os.path.join(dir, "zscore_anomalies.png"))
     plt.show()
