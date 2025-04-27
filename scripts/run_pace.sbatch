@@ -12,4 +12,4 @@
 
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate pumpdumpsters-env
-bash hyper_param_sweep_pace.sh
+python3 run_all_models.py 
