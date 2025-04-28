@@ -1,4 +1,0 @@
-model,accuracy,precision,recall,f1_score,false_positive_rate,false_negative_rate,true_positives,false_positives,true_negatives,false_negatives
-lstm,0.0,0.0,0.0,0.0,1.0,1.0,0,1,0,4
-autoencoder,0.2,0.0,0.0,0.0,0.0,1.0,0,0,1,4
-hybrid,0.0,0.0,0.0,0.0,1.0,1.0,0,1,0,4
